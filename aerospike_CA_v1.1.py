@@ -176,12 +176,12 @@ def check_log_files_presence():
             if log_files:
                 log_files_found = True
                 print(f"Log files found in {path}:")
-				print("AD16 - PASS")
+                print("AD16 - PASS")
                 for log_file in log_files:
                     print(f"- {log_file}")
             else:
                 print(f"No log files found in {path}.")
-				print("AD16 - FAIL")
+                print("AD16 - FAIL")
         else:
             print(f"Path does not exist: {path}")
 
