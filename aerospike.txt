@@ -1,0 +1,116 @@
+# Aerospike database configuration file.
+
+# This stanza must come first.
+service {
+    query-threads-limit 512
+	proto-fd-max 15000
+	node-id 291819210	
+	cluster-name cdp-aerospike-aws-prod
+	batch-max-requests 10000
+
+}
+
+security {
+        enable-quotas true
+
+        # Other security-related configuration...
+syslog {
+
+        local 0
+
+        report-authentication true
+        report-user-admin true
+        report-sys-admin true
+        report-violation true
+		# replace the namespace with env
+        }
+}
+
+logging {
+	# Log file must be an absolute path.
+	file /data/aerospike/aerospike.log {
+		context any info 
+	}
+
+}
+xdr {
+    dc cdp-aws-DR {
+        node-address-port 10.220.3.11 3000
+        node-address-port 10.220.3.12 3000
+        node-address-port 10.220.3.37 3000
+        node-address-port 10.220.3.38 3000
+        node-address-port 10.220.3.71 3000
+        node-address-port 10.220.3.91 3000
+        auth-mode internal
+        auth-user cdpw
+        auth-password-file /data/security-credentials-CDP-AWS-DR.txt
+        namespace cdp {
+            bin-policy all
+            ship-nsup-deletes true
+            max-throughput 50000
+        }
+    }
+}
+
+network {
+	
+	service {
+		address any
+		
+		port 3000
+				
+		
+	}
+
+	heartbeat {
+        mode mesh
+        address any
+        port 3002
+        mesh-seed-address-port 10.192.18.29 3002
+        mesh-seed-address-port 10.192.18.49 3002
+        mesh-seed-address-port 10.192.19.90 3002
+        mesh-seed-address-port 10.192.18.10 3002
+        mesh-seed-address-port 10.192.18.42 3002
+        mesh-seed-address-port 10.192.19.75 3002
+
+        interval 250
+        timeout 10
+
+	}
+
+	fabric {
+		address any
+		port 3001		
+	}
+
+	info {
+                address any
+		port 3003
+	}
+}
+
+# replace the namespace with env
+namespace cdp {
+	replication-factor 3
+	memory-size 80G
+    rack-id 101
+	default-ttl 0d
+	nsup-period 600
+	 	
+	
+	# To use file storage backing, comment out the line above and use the
+	# following lines instead.
+	storage-engine device {
+		encryption-key-file /etc/aerospike/key.dat
+                encryption aes-256
+                read-page-cache true
+		 
+		device /dev/nvme3n1p1 
+		device /dev/nvme3n1p2 
+		device /dev/nvme3n1p3 
+		device /dev/nvme3n1p4 
+		data-in-memory false # Store data in memory in addition to file.
+	}
+	
+}
+
