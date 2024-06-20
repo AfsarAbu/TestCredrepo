@@ -10,13 +10,13 @@ def check_security_ldap_stanza(config_file_path):
             config_content = file.read()
         
         if 'security {' in config_content:
-            print("Security stanza found. - PASS")
+            print("Security stanza found.")
             if 'ldap {' in config_content:
-                print("LDAP is configured. - PASS")
+                print("LDAP is configured. - AD2 - PASS")
             else:
-                print("LDAP is not configured. - FAIL")
+                print("LDAP is not configured. - AD2 - FAIL")
         else:
-            print("Security stanza NOT found. - FAIL")
+            print("Security stanza NOT found. - AD2 - FAIL")
             
     except FileNotFoundError:
         print(f"Configuration file not found: {config_file_path}")
@@ -32,9 +32,9 @@ def check_xdr_stanza(config_file_path):
             config_content = file.read()
         
         if 'xdr {' in config_content:
-            print("XDR is configured. - PASS")
+            print("XDR is configured. - AD2 - PASS")
         else:
-            print("XDR is not configured. - FAIL")
+            print("XDR is not configured. - AD2 - FAIL")
             
     except FileNotFoundError:
         print(f"Configuration file not found: {config_file_path}")
@@ -50,9 +50,9 @@ def check_encryption_at_rest(config_file_path):
             config_content = file.read()
         
         if 'storage-engine device {' in config_content:
-            print("Encryption at rest is configured. - PASS")
+            print("Encryption at rest is configured. - AD3 - PASS")
         else:
-            print("Encryption at rest is NOT configured. - FAIL")
+            print("Encryption at rest is NOT configured. - AD3 - FAIL")
             
     except FileNotFoundError:
         print(f"Configuration file not found: {config_file_path}")
@@ -79,9 +79,9 @@ def check_key_dat_encryption(config_file_path):
                 break
         
         if found_encryption:
-            print("Encryption aes- found inside storage-engine device { } stanza. - PASS")
+            print("Encryption aes- found inside storage-engine device { } stanza. - AD4 - PASS")
         else:
-            print("Encryption aes- NOT found inside storage-engine device { } stanza. - FAIL")
+            print("Encryption aes- NOT found inside storage-engine device { } stanza. - AD4 - FAIL")
             
     except FileNotFoundError:
         print(f"Configuration file not found: {config_file_path}")
@@ -113,17 +113,17 @@ def check_tls_configuration(config_file_path):
                 break
 
         if service_stanza:
-            print("Service stanza found. - PASS")
+            print("Service stanza found.")
             if tls_stanza:
-                print("TLS sub-stanza found after service stanza. - PASS")
+                print("TLS sub-stanza found after service stanza. - AD9 - PASS")
                 if tls_enabled:
-                    print("TLS is enabled. - PASS")
+                    print("TLS is enabled. - AD9 - PASS")
                 else:
-                    print("TLS is NOT enabled. - FAIL")
+                    print("TLS is NOT enabled. - AD9 - FAIL")
             else:
-                print("TLS sub-stanza NOT found immediately after service stanza. - FAIL")
+                print("TLS sub-stanza NOT found after service stanza. - AD9 - FAIL")
         else:
-            print("Service stanza NOT found. - FAIL")
+            print("Service stanza NOT found. - AD9 - FAIL")
             
     except FileNotFoundError:
         print(f"Configuration file not found: {config_file_path}")
@@ -141,15 +141,15 @@ def check_backup_in_crontab():
         
         # Check if as_incremental_backup.sh is configured in crontab
         if 'as_incremental_backup.sh' in crontab_content:
-            print("Incremental backup script (as_incremental_backup.sh) is configured in crontab. - PASS")
+            print("Incremental backup script (as_incremental_backup.sh) is configured in crontab. - AD16 - PASS")
         else:
-            print("Incremental backup script (as_incremental_backup.sh) is NOT configured in crontab. - FAIL")
+            print("Incremental backup script (as_incremental_backup.sh) is NOT configured in crontab. - AD16 - FAIL")
         
         # Check if as_full_backup.sh is configured in crontab
         if 'as_full_backup.sh' in crontab_content:
-            print("Full backup script (as_full_backup.sh) is configured in crontab. - PASS")
+            print("Full backup script (as_full_backup.sh) is configured in crontab. - AD16 - PASS")
         else:
-            print("Full backup script (as_full_backup.sh) is NOT configured in crontab. - FAIL")
+            print("Full backup script (as_full_backup.sh) is NOT configured in crontab. - AD16 - FAIL")
         
     except subprocess.CalledProcessError as e:
         print("Error retrieving crontab entries.")
@@ -176,10 +176,12 @@ def check_log_files_presence():
             if log_files:
                 log_files_found = True
                 print(f"Log files found in {path}:")
+				print("AD16 - PASS")
                 for log_file in log_files:
                     print(f"- {log_file}")
             else:
                 print(f"No log files found in {path}.")
+				print("AD16 - FAIL")
         else:
             print(f"Path does not exist: {path}")
 
@@ -211,13 +213,13 @@ def check_file_log_sink(config_file_path):
                 break
 
         if logging_stanza:
-            print("Logging stanza found. - PASS")
+            print("Logging stanza found.")
             if file_log_sink:
-                print("File log sink found in logging stanza. - PASS")
+                print("File log sink found in logging stanza. - AD17 - PASS")
             else:
-                print("File log sink NOT found in logging stanza. - FAIL")
+                print("File log sink NOT found in logging stanza. - AD17 - FAIL")
         else:
-            print("Logging stanza NOT found. - FAIL")
+            print("Logging stanza NOT found. - AD17 - FAIL")
             
     except FileNotFoundError:
         print(f"Configuration file not found: {config_file_path}")
@@ -246,13 +248,13 @@ def check_aerospike_version(user_version):
 
             # Check if installed version matches any accepted version
             if installed_version in accepted_versions:
-                print(f"Aerospike version {installed_version} is installed and accepted. - PASS")
+                print(f"Aerospike version {installed_version} is installed and accepted. - AD15 - PASS")
             else:
-                print(f"Aerospike version {installed_version} is installed but not accepted. - FAIL")
+                print(f"Aerospike version {installed_version} is installed but not accepted. - AD15 - FAIL")
         else:
             print("Error retrieving Aerospike version.")
     except FileNotFoundError:
-        print("Aerospike command not found. Ensure Aerospike is installed and in the system PATH.")
+        print("Aerospike command not found. Ensure Aerospike is installed and in the system PATH. - AD17 - FAIL")
     except Exception as e:
         print(f"An error occurred while checking Aerospike version: {e}")
 
