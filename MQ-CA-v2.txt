@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Function to check MQ attributes
+check_mq_attributes() {
+    # Get the Queue Manager name as an argument
+    local qmgr_name=$1
+
+    # Create a temporary file to store the output
+    output_file=$(mktemp)
+
+    # Run the MQSC commands and append the output to the temporary file
+    runmqsc "$qmgr_name" <<< "DIS QMGR PERFMEV" >> $output_file
+    runmqsc "$qmgr_name" <<< "DIS QLOCAL(SYSTEM.ADMIN.PERFM.EVENT) QDEPTHHI" >> $output_file
+
+    # Parse the output
+    perfmev=$(grep -A 1 "PERFMEV" $output_file | tail -n 1 | awk '{print $2}')
+    qdphiev=$(grep -A 1 "QDEPTHHI" $output_file | tail -n 1 | awk '{print $2}')
+
+    # Display the results
+    echo "PERFMEV (Queue Manager Performance Events): $perfmev"
+    echo "QDEPTHHI (Queue Depth High Event): $qdphiev"
+
+    # Clean up
+    rm $output_file
+}
+
+# Get Queue Manager name from user input
+read -p "Enter the Queue Manager name: " qmgr_name
+
+# Check the MQ attributes using the provided Queue Manager name
+check_mq_attributes "$qmgr_name"
